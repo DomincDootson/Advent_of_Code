@@ -2,12 +2,12 @@ from collections import Counter
 from abc import ABC, abstractmethod
 
 class Hand(ABC):
-	def __init__(self, hand, rank):
-		self.hand = hand
-		self.rank = rank
-		self.score = self.get_score(self.get_counter())
+	def __init__(self, hand : list[int], rank : list[int]) -> None:
+		self.hand : list[int] = hand
+		self.rank : list[int] = rank
+		self.score : int = self.get_score(self.get_counter())
 	
-	def get_score(self, hand_counter):
+	def get_score(self, hand_counter : dict[int, int]) -> int:
 		l = len(hand_counter)
 		if  l ==1:
 			return 7
@@ -21,13 +21,13 @@ class Hand(ABC):
 			return 1
 
 	@abstractmethod
-	def get_counter(self):
+	def get_counter(self) -> dict[int, int]:
 		pass
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		return f"{self.hand} : {self.rank}"
 
-	def __lt__(self, other):
+	def __lt__(self, other) -> bool:
 		if self.score == other.score:
 			for s, o in zip(self.hand, other.hand):
 				if s != o:
@@ -38,7 +38,7 @@ class Hand(ABC):
 class NormalHand(Hand):
 	"""docstring for NormalHand"""
 	MAP = {**{f"{i}" : i for i in range(1,10)}, "T" : 10, "J" : 11, "Q" : 12, "K" : 13, "A" : 14}
-	def __init__(self, hand, rank):
+	def __init__(self, hand, rank) -> None:
 		Hand.__init__(self, [NormalHand.MAP[h] for h in hand], int(rank))
 
 	def get_counter(self):
@@ -62,7 +62,7 @@ class JokerHand(Hand):
 		return count		
 
 ## Functions ## 
-def read_in_hands(filename):
+def read_in_hands(filename : str) -> list[(list[int], int)]:
 	hands = []
 	with open(filename) as file:
 		for line in file.readlines():
@@ -71,14 +71,14 @@ def read_in_hands(filename):
 
 	return hands
 
-def standard_camel_cards(filename):
+def standard_camel_cards(filename : str) -> int:
 	hands = read_in_hands(filename)
 	normal_hands = [NormalHand(h, r) for h, r in hands]
 	normal_hands.sort()
 	
 	return sum(((i+1)*hand.rank for i, hand in enumerate(normal_hands)))
 
-def joker_camel_cards(filename):
+def joker_camel_cards(filename : str) -> int:
 	hands = read_in_hands(filename)
 	normal_hands = [JokerHand(h, r) for h, r in hands]
 	normal_hands.sort()
