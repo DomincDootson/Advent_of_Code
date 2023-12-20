@@ -1,3 +1,5 @@
+from itertools import combinations
+
 def read_image(filename):
 	
 	with open(filename) as file:
@@ -39,18 +41,13 @@ def calculate_distance(coord1, coord2, empty_rows, empty_cols, expansion_factor 
 			extra += 1
 	return (max_row-min_row) + (max_col-min_col) + extra * (expansion_factor-1)			
 	
-def calculate_distances(file, expansion_factor):
+def calculate_distances(file, expansion_factor): # Note that the expansion factor is the number of rows that replace the empty. 
 	image = read_image(file)
 	empty_rows, empty_cols = expand_galaxy(image)
-	coords = find_galaxies(image)
-	
-	
-	total = 0
-	for i in range(len(coords)):
-		for j in range(i+1, len(coords)):
-			total += calculate_distance(coords[i], coords[j], empty_rows, empty_cols, expansion_factor)
+	coords = find_galaxies(image)	
 
-	return total
+	return sum((calculate_distance(pair[0], pair[1], empty_rows, empty_cols, expansion_factor) 
+		for pair in combinations(coords, 2)))
 	
 
 
