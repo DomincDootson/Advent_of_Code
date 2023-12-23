@@ -7,7 +7,6 @@ def read_distribution(filename):
 	return [[s for s in l ] for l in dist]
 
 class Distribution():
-	
 	def __init__(self, filename):
 		self.dist = read_distribution(filename)
 
@@ -79,7 +78,7 @@ def cycle(filename):
 		seen.append(str(d))
 		score.append(d.calculate_load())
 
-	return score[(1000000000-start)%(cycle_len) +start] 
+	return score[(1000000000-start)%(cycle_len)+start] 
 
 
 print(title_north("Inputs/Day_14_Test.txt"))	
