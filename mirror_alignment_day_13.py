@@ -25,17 +25,16 @@ def count_differences(pattern, reflection_line, comparison_score) -> bool:
 	return total == comparison_score
 
 
-def check_reflections(pattern, comparison_score):
+def check_reflections(pattern, comparison_score) -> int:
 	for i in range(np.shape(pattern)[0]-1):
 		if count_differences(pattern, i, comparison_score):
 			return (i+1)
 	return 0
 
-def find_mirror(pattern, comparison_score):
-	row_total = 100 * check_reflections(pattern, comparison_score)
-	return check_reflections(pattern.transpose(), comparison_score) + row_total
+def find_mirror(pattern, comparison_score) -> int:
+	return check_reflections(pattern.transpose(), comparison_score) + 100 * check_reflections(pattern, comparison_score)
 
-def find_mirrors(filename, comparison_score = 0):
+def find_mirrors(filename, comparison_score = 0) -> int:
 	patterns = get_patterns(filename)
 	return sum((find_mirror(p, comparison_score) for p in patterns))
 	
@@ -45,4 +44,3 @@ print(find_mirrors("Inputs/Day_13_input.txt"))
 
 print(find_mirrors("Inputs/Day_13_Test.txt", 1))
 print(find_mirrors("Inputs/Day_13_input.txt", 1))
-
