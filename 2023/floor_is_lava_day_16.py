@@ -1,9 +1,5 @@
 from collections import defaultdict
 
-import time
-
-
-
 def read_in_grid(filename):
 	with open(filename) as file:
 		lines = file.read()[:-1]
@@ -38,11 +34,11 @@ class Grid():
 		self.rays = [ray]
 
 	def evolve_rays(self):
-		while len(self.rays) > 0: 
-			self.update_visted() 
+		while len(self.rays) > 0:  
 			self.update_directions() 
 			self.move_rays()
 			self.remove_off_grid() # Checks if they are on the grid
+			self.update_visted()
 
 	def visited_squares(self):
 		self.evolve_rays()
@@ -95,8 +91,7 @@ class Grid():
 
 			
 def n_energised_squares(filename):
-	grid = Grid(filename)
-	
+	grid = Grid(filename)	
 	return grid.visited_squares()
 
 def find_optimal_start(filename):
