@@ -15,8 +15,6 @@ class Path():
 		self.direction = direction
 		self.n_direction = n_dir
 
-		## To the seen we need to add (p, d, n)
-
 	def __repr__(self):
 		return f"{self.heat_loss} : {self.index} : {self.direction}"
 	def __lt__(self, other):
@@ -31,11 +29,9 @@ class Path():
 	def step(self):
 		self.index = (self.index[0]+self.direction[0], self.index[1] + self.direction[1])
 
-		
-
 
 class Grid():
-	"""docstring for Grid"""
+
 	def __init__(self, filename, min_direction, max_direction):
 		self.grid = read_in_grid(filename)
 		self.n, self.m  = len(self.grid), len(self.grid[0])
@@ -45,8 +41,6 @@ class Grid():
 		self.paths.put(Path(0, (0,0), (1,0), 1))
 		self.paths.put(Path(0, (0,0), (0,1), 1))
 
-
-
 		self.min_direction, self.max_direction = min_direction, max_direction
 
 
@@ -54,20 +48,13 @@ class Grid():
 		while self.paths:
 			shortest_path = self.paths.get()
 			shortest_path.step()
-			
-			
-
 			if (not shortest_path.is_on_grid(self.n, self.m)) or (shortest_path.hash() in self.seen): # Checks if the path is okay
 				continue
 			else:
 				self.seen.add(shortest_path.hash())
 				
-			
-
 			i, j = shortest_path.index 
-
 			shortest_path.heat_loss += self.grid[i][j]
-
 
 			if (i == self.n-1) and (j == self.m-1) and (shortest_path.n_direction >= self.min_direction):	
 				return shortest_path.heat_loss
@@ -75,7 +62,6 @@ class Grid():
 			if shortest_path.n_direction >= self.min_direction:
 				self.paths.put(Path(shortest_path.heat_loss, shortest_path.index, (shortest_path.direction[1],   shortest_path.direction[0]), 1))
 				self.paths.put(Path(shortest_path.heat_loss, shortest_path.index, (-shortest_path.direction[1], -shortest_path.direction[0]), 1))
-
 
 			if shortest_path.n_direction < (self.max_direction):
 				self.paths.put(Path(shortest_path.heat_loss, shortest_path.index, (shortest_path.direction[0],   shortest_path.direction[1]), shortest_path.n_direction+1))
@@ -91,15 +77,8 @@ def find_shorest_path(filename, min_direction = 0, max_direction = 3):
 	
 
 
-# print(find_shorest_path("Inputs/Day_17_Test.txt"))
-# print(find_shorest_path("Inputs/Day_17_input.txt"))
+print(find_shorest_path("Inputs/Day_17_Test.txt"))
+print(find_shorest_path("Inputs/Day_17_input.txt"))
 
 print(find_shorest_path("Inputs/Day_17_Test.txt", min_direction = 4, max_direction = 10))
 print(find_shorest_path("Inputs/Day_17_input.txt", min_direction = 4, max_direction = 10))
-
-		
-		
-		
-
-
-
