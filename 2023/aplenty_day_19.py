@@ -1,9 +1,8 @@
 from typing import Tuple
 from dataclasses import dataclass, asdict
 from operator import lt, gt
-from collections import defaultdict
 
-@dataclass
+@dataclass(slots = True)
 class Part:
 	x : int
 	m : int  
@@ -13,12 +12,12 @@ class Part:
 	def add_values(self):
 		return self.x + self.m + self.a + self.s
 
-@dataclass
+@dataclass(slots = True)
 class PartRange:
-	x : tuple[int, int]
-	m : tuple[int, int]
-	a : tuple[int, int]
-	s : tuple[int, int]
+	x : tuple[int, int] = (1, 4000)
+	m : tuple[int, int] = (1, 4000)
+	a : tuple[int, int] = (1, 4000)
+	s : tuple[int, int] = (1, 4000)
 
 	def n_values(self):
 		return (self.x[1]-self.x[0]+1) * (self.m[1]-self.m[0]+1) * (self.a[1]-self.a[0]+1) * (self.s[1]-self.s[0]+1)
@@ -32,7 +31,10 @@ class Step():
 		else:
 			self.var, self.value = comparison.split(">")
 			self.comparison = gt 
+		
 		self.value = int(self.value)
+	
+
 	def __repr__(self):
 		return f"{self.var} {self.comparison} {self.value} --> {self.target}"
 
@@ -72,8 +74,6 @@ class Workflow():
 
 		to_check.append((part_range, self.terminal))
 		return to_check
-
-	
 		
 class Workflows(object):
 	def __init__(self, workflows):
@@ -87,9 +87,8 @@ class Workflows(object):
 
 
 	def check_range(self):
-		ranges_queue = [(PartRange((1,4000), (1,4000), (1,4000), (1,4000)), 'in')]
+		ranges_queue = [(PartRange(), 'in')]
 		count = 0
-		i = 0
 		while len(ranges_queue) > 0: 
 			current_range, current_workflow = ranges_queue.pop()
 			if current_workflow == "A":
@@ -98,8 +97,8 @@ class Workflows(object):
 				ranges_queue.extend(self.workflows[current_workflow].check_ranges(current_range))
 		return count
 
-
-
+## File Parsing ##
+## ------------ ##
 def string_2_parts(part_strings):
 	part_string = part_strings[0][1:-1] 
 	d = [{e.split('=')[0] : int(e.split('=')[1]) for e in part[1:-1].split(',')} for part in part_strings]
@@ -121,6 +120,10 @@ def read_in_workflows(filename):
 	with open(filename) as file:
 		workflows, parts = file.read().split('\n\n')
 	return string_2_workflows(workflows.split('\n')), string_2_parts(parts[:-1].split('\n'))
+
+
+## Solution Functions ##
+## ------------------ ## 
 
 def check_parts(filename):
 	wf, parts = read_in_workflows(filename)	
