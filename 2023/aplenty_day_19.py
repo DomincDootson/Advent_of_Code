@@ -1,6 +1,8 @@
-from dataclasses import dataclass
+from typing import Tuple
+from dataclasses import dataclass, asdict
 from operator import lt, gt
 from collections import defaultdict
+
 @dataclass
 class Part:
 	x : int
@@ -10,6 +12,16 @@ class Part:
 
 	def add_values(self):
 		return self.x + self.m + self.a + self.s
+
+@dataclass
+class PartRange:
+	x : tuple[int, int]
+	m : tuple[int, int]
+	a : tuple[int, int]
+	s : tuple[int, int]
+
+	def n_values(self):
+		return (self.x[1]-self.x[0]+1) * (self.m[1]-self.m[0]+1) * (self.a[1]-self.a[0]+1) * (self.s[1]-self.s[0]+1)
 
 class Step():
 	def __init__(self, string):
@@ -27,6 +39,19 @@ class Step():
 	def check(self, part) -> bool:
 		return  self.comparison(getattr(part, self.var), self.value) 
 
+
+	def split(self, part_range): # The first one will be the one that satisfies the condition 
+		copy_values_true, copy_values_false = asdict(part_range), asdict(part_range)
+		
+		if self.comparison == lt:
+			copy_values_true[self.var], copy_values_false[self.var] = (copy_values_true[self.var][0], self.value-1), (self.value, copy_values_true[self.var][1])
+		else:
+			copy_values_true[self.var], copy_values_false[self.var] = (self.value+1, copy_values_true[self.var][1]), (copy_values_true[self.var][0], self.value)
+		
+		part_range_true, part_range_false = PartRange(**copy_values_true), PartRange(**copy_values_false)
+		return part_range_true, part_range_false
+
+
 class Workflow():
 	def __init__(self, name, steps, terminal):
 		self.name = name
@@ -39,13 +64,16 @@ class Workflow():
 				return step.target
 		return self.terminal
 
-	def critical_values(self):
-		cv = defaultdict(list)
-		for s in self.steps:
-			cv[s.var].append(s.value)
-			cv[s.var].append(s.value-1 if s.comparison == lt else s.value+1)
+	def check_ranges(self, part_range):
+		to_check = []
+		for step in self.steps:
+			true_range, part_range = step.split(part_range)
+			to_check.append((true_range, step.target))
 
-		return cv
+		to_check.append((part_range, self.terminal))
+		return to_check
+
+	
 		
 class Workflows(object):
 	def __init__(self, workflows):
@@ -56,7 +84,21 @@ class Workflows(object):
 		while workflow != 'A' and workflow != 'R':
 			workflow = self.workflows[workflow].check(part)
 		return True if workflow == "A" else False
-		
+
+
+	def check_range(self):
+		ranges_queue = [(PartRange((1,4000), (1,4000), (1,4000), (1,4000)), 'in')]
+		count = 0
+		i = 0
+		while len(ranges_queue) > 0: 
+			current_range, current_workflow = ranges_queue.pop()
+			if current_workflow == "A":
+				count += current_range.n_values()
+			elif current_workflow != "R":
+				ranges_queue.extend(self.workflows[current_workflow].check_ranges(current_range))
+		return count
+
+
 
 def string_2_parts(part_strings):
 	part_string = part_strings[0][1:-1] 
@@ -83,21 +125,15 @@ def read_in_workflows(filename):
 def check_parts(filename):
 	wf, parts = read_in_workflows(filename)	
 	accepted_parts = [p for p in parts if wf.check(p)]
-
 	return sum((p.add_values() for p in accepted_parts))
+
+def check_ranges(filename):
+	wf, _ = read_in_workflows(filename)
+	return wf.check_range()
 
 print(check_parts("Inputs/Day_19_Test.txt"))
 print(check_parts("Inputs/Day_19_input.txt"))
 
-
-# wf, _ = read_in_workflows("Inputs/Day_19_input.txt")
-# print(wf.workflows['in'].critical_values())
-# cv = defaultdict(list)
-# for w in wf.workflows.values():
-# 	cv_w = w.critical_values()
-
-# 	for k, values in cv_w.items():
-# 		cv[k].extend(values)
-
-# print(len(cv['x'])*len(cv['a'])*len(cv['m'])*len(cv['s']))
+print(check_ranges("Inputs/Day_19_Test.txt"))
+print(check_ranges("Inputs/Day_19_input.txt"))
 
