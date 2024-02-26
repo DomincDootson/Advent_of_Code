@@ -9,8 +9,6 @@ def make_trie(*words):
 		current_dic["*"] = END 
 	return root
 
-
-
 def check_in_trie(string, trie, index):
 	if END in trie:
 		return index
@@ -19,12 +17,6 @@ def check_in_trie(string, trie, index):
 		return 0
 	
 	return check_in_trie(string, trie[string[index]], index+1)
-
-	
-	
-	
-	
-
 
 
 def calculate_sum(filename):
@@ -36,7 +28,6 @@ def calculate_sum(filename):
 	return total
 
 
-## some code that parses through each line to find the numbers
 
 def get_numbers(line):
 	l = 0
@@ -45,8 +36,6 @@ def get_numbers(line):
 	mapping = {"zero" : 0, "one" : 1, "two" : 2, "three" : 3, "four" : 4, "five" : 5, "six" : 6, "seven" : 7, "eight" : 8, "nine" : 9}
 
 	while l < len(line):
-
-		
 		index_skip = check_in_trie(line, trie, l)
 		
 		if line[l].isnumeric(): 
@@ -55,25 +44,12 @@ def get_numbers(line):
 		
 		elif index_skip > 0: 
 			numbers.append(mapping[line[l:index_skip]])
-			#print(line[l:index_skip])
 			l += 1
-
-		
 		else:
 			l += 1
 	
 	return 10*numbers[0] + numbers[-1]
 	
-
-
-
-
-#get_numbers("6onesix")
 print(calculate_sum("Day_1_test.txt")) 
 print(calculate_sum("Day_1_test_2.txt")) 
 print(calculate_sum("Day_1_input.txt")) 
-
-
-
-#print(check_in_trie("z", trie, 0))
-

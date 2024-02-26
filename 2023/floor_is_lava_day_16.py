@@ -86,7 +86,6 @@ class Grid():
 					string += "#"
 				else:
 					string += "."
-			print(string)
 
 
 			

@@ -8,7 +8,7 @@ def read_in_grid(filename):
 
 
 class Path():
-	"""docstring for Path"""
+	'''Contains the path that the cruicble will take'''
 	def __init__(self, hl, index, direction, n_dir):
 		self.heat_loss = hl 
 		self.index = index
@@ -31,7 +31,7 @@ class Path():
 
 
 class Grid():
-
+	'''Contains the grid that the crucible will follow''' 
 	def __init__(self, filename, min_direction, max_direction):
 		self.grid = read_in_grid(filename)
 		self.n, self.m  = len(self.grid), len(self.grid[0])

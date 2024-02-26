@@ -17,8 +17,6 @@ class Node():
 		return self.range[0] < other[0]
 
 
-
-
 class Mapping():
 	def __init__(self, values : list[str]):
 		
